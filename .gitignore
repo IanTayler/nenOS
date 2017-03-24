@@ -1,4 +1,4 @@
-./build/*
-./build
-./iso/boot/nenos.bin
+build/*
+build
+iso/boot/nenos.bin
 kernel.bin
