@@ -1,0 +1,4 @@
+./build/*
+./build
+./iso/boot/nenos.bin
+kernel.bin
