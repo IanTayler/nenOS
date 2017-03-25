@@ -11,6 +11,7 @@
 .global _start
 .type _start @function
 _start:
+    jmp stublet
 
 mboot:
     .align 4
@@ -19,18 +20,11 @@ mboot:
     .long FLAGS
     .long CHECKSUM
 
-    # A.OUT 'kludge' (i.e. weird hack)
-    # Will comment and see if ELF just works here.
-    #dd mboot
-    #dd code
-    #dd bss
-    #dd end
-    #dd _start
-
     movl _sys_stack, %esp
-    jmp stublet
 
 stublet:
+    # Print some stuff.
+    #movl $0x2f4b2f4f, 0xb8000
     call cmain
     cli
 lp:

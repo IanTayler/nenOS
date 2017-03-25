@@ -11,4 +11,10 @@ extern int strlen(const char *str);
 extern uchar inportb (u16 _port);
 extern void outportb (u16 _port, uchar _data);
 
+/* VGA.C */
+extern void print_something();
+extern void blinker_something();
+extern void r_print(char message[]);
+extern void clear_screen();
+
 #endif

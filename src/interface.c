@@ -6,12 +6,10 @@ uchar *memcpy(uchar *dest, const uchar *src, int count)
     /* Add code here to copy 'count' bytes of data from 'src' to
     *  'dest', finally return 'dest' */
     uchar *new_dest = dest;
-    uchar *new_src = src;
+    const uchar *new_src = src;
 
-    for(int i = 0; i < count; i++) {
-        *new_dest = *new_src;
-        new_dest++;
-        new_src++;
+    for(; count > 0; count--) {
+        *new_dest++ = *new_src++;
     }
     return dest;
 }
@@ -22,9 +20,8 @@ uchar *memset(uchar *dest, uchar val, int count)
     *  Again, return 'dest' */
     uchar *new_dest = dest;
 
-    for(int i = 0; i < count; i++) {
-        *new_dest = val;
-        new_dest++;
+    for(; count > 0; count--) {
+        *new_dest++ = val;
     }
     return dest;
 }
@@ -37,9 +34,8 @@ u16 *memsetw(u16 *dest, u16 val, int count)
     *  u16 */
     u16 *new_dest = dest;
 
-    for(int i = 0; i < count; i++) {
-        *new_dest = val;
-        new_dest++;
+    for(; count > 0; count--) {
+        *new_dest++ = val;
     }
     return dest;
 }
