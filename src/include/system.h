@@ -17,4 +17,7 @@ extern void blinker_something();
 extern void r_print(char message[]);
 extern void clear_screen();
 
+/* GDT.C */
+extern void gdt_install();
+
 #endif

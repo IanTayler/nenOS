@@ -35,14 +35,16 @@ LINKSCRIPT		= $(ASMPREFIX)link.ld
 
 all: $(BUILDPATH)boot.o $(BUILDPATH)kernel.o
 	$(LD) $(ILDFLAGS) $(BUILDPATH)boot.o $(BUILDPATH)kernel.o \
-	$(BUILDPATH)interface.o $(BUILDPATH)vga.o $(OLDFLAGS)
+	$(BUILDPATH)interface.o $(BUILDPATH)vga.o $(BUILDPATH)gdt.o \
+	$(OLDFLAGS)
 
 $(BUILDPATH)boot.o: $(ASMPREFIX)boot.s
 	$(AS) -c $(ASMPREFIX)boot.s -o $(BUILDPATH)boot.o
 
 $(BUILDPATH)kernel.o: $(KERNELPATH) $(INCLUSIONS)\
 					  $(BUILDPATH)interface.o\
-					  $(BUILDPATH)vga.o
+					  $(BUILDPATH)vga.o\
+					  $(BUILDPATH)gdt.o
 	$(CC) $(ICFLAGS) $(KERNELPATH) $(OCFLAGS) -o \
 	$(BUILDPATH)kernel.o
 
@@ -53,6 +55,10 @@ $(BUILDPATH)interface.o: $(SOURCEPREF)interface.c
 $(BUILDPATH)vga.o: $(SOURCEPREF)vga.c
 	$(CC) $(ICFLAGS) $(SOURCEPREF)vga.c $(OCFLAGS) -o \
 	$(BUILDPATH)vga.o
+
+$(BUILDPATH)gdt.o: $(SOURCEPREF)gdt.c
+	$(CC) $(ICFLAGS) $(SOURCEPREF)gdt.c $(OCFLAGS) -o \
+	$(BUILDPATH)gdt.o
 
 test: all
 	if grub-file --is-x86-multiboot $(OUTPUTNAME); then \
