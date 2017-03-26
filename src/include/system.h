@@ -19,5 +19,11 @@ extern void clear_screen();
 
 /* GDT.C */
 extern void gdt_install();
+extern struct gdt_entry new_gdt_entry(u32 base, u32 limit, uchar privilege, uchar dir_or_control, uchar read_write, uchar exec, uchar granularity);
+extern void gdt_set_gate(int num, struct gdt_entry entry);
+extern void gdt_test();
+
+extern void idt_set_gate(unsigned char num, unsigned long base, unsigned short sel, unsigned char flags);
+extern void idt_install();
 
 #endif

@@ -13,16 +13,16 @@ BUILDPATH		= ./build/
 
 SOURCEPREF		= ./src/
 INCLUDEPREF		= $(SOURCEPREF)include/
+ASMPREFIX		= ./src/arch/$(ARCH)/
 
 # Inner C flags.
-ICFLAGS 		= -I$(SOURCEPREF) -I$(INCLUDEPREF) -c
+ICFLAGS 		= -I$(SOURCEPREF) -I$(INCLUDEPREF)\
+				  -I$(ASMPREFIX) -c
 # Outer C flags.
 OCFLAGS 		= -ffreestanding $(OPT) -Wall -Wextra
 
 ILDFLAGS 		= -T $(LINKSCRIPT) -ffreestanding $(OPT) -nostdlib
 OLDFLAGS 		= -o $(OUTPUTNAME) -lgcc
-
-ASMPREFIX		= ./src/arch/$(ARCH)/
 
 INCLUSIONS		= $(INCLUDEPREF)system.h $(INCLUDEPREF)head.h
 SOURCES			= $(SOURCEPREF)interface.c
