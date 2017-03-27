@@ -26,4 +26,16 @@ extern void gdt_test();
 extern void idt_set_gate(unsigned char num, unsigned long base, unsigned short sel, unsigned char flags);
 extern void idt_install();
 
+/* ISRS.C */
+/* This defines what the stack looks like after an ISR was running */
+void isrs_install();
+struct regs
+{
+    uint gs, fs, es, ds;      /* pushed the segs last */
+    uint edi, esi, ebp, esp, ebx, edx, ecx, eax;  /* pushed by 'pusha' */
+    uint int_no, err_code;    /* our 'push byte #' and ecodes do this */
+    uint eip, cs, eflags, useresp, ss;   /* pushed by the processor automatically */
+};
+void fault_handler(struct regs *r);
+
 #endif

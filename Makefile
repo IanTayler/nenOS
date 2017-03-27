@@ -36,7 +36,7 @@ LINKSCRIPT		= $(ASMPREFIX)link.ld
 all: $(ASMPREFIX)boot.s $(BUILDPATH)boot.o $(BUILDPATH)kernel.o
 	$(LD) $(ILDFLAGS) $(BUILDPATH)boot.o $(BUILDPATH)kernel.o \
 	$(BUILDPATH)interface.o $(BUILDPATH)vga.o $(BUILDPATH)gdt.o \
-	$(OLDFLAGS)
+	$(BUILDPATH)isrs.o $(OLDFLAGS)
 
 $(BUILDPATH)boot.o: $(ASMPREFIX)boot.s
 	$(AS) -c $(ASMPREFIX)boot.s -o $(BUILDPATH)boot.o
@@ -44,7 +44,8 @@ $(BUILDPATH)boot.o: $(ASMPREFIX)boot.s
 $(BUILDPATH)kernel.o: $(KERNELPATH) $(INCLUSIONS)\
 					  $(BUILDPATH)interface.o\
 					  $(BUILDPATH)vga.o\
-					  $(BUILDPATH)gdt.o
+					  $(BUILDPATH)gdt.o\
+					  $(BUILDPATH)isrs.o
 	$(CC) $(ICFLAGS) $(KERNELPATH) $(OCFLAGS) -o \
 	$(BUILDPATH)kernel.o
 
@@ -60,6 +61,10 @@ $(BUILDPATH)gdt.o: $(SOURCEPREF)gdt.c
 	$(CC) $(ICFLAGS) $(SOURCEPREF)gdt.c $(OCFLAGS) -o \
 	$(BUILDPATH)gdt.o
 
+$(BUILDPATH)isrs.o: $(SOURCEPREF)isrs.c
+	$(CC) $(ICFLAGS) $(SOURCEPREF)isrs.c $(OCFLAGS) -o \
+	$(BUILDPATH)isrs.o
+
 test: all
 	@if grub-file --is-x86-multiboot $(OUTPUTNAME); @then \
   	@echo multiboot working!!; \
@@ -73,7 +78,7 @@ iso: all
 qemu: iso
 	@qemu-system-i386 -cdrom $(BUILDPATH)nenos.iso
 
-$(ASMPREFIX)boot.s: $(ASMPREFIX)isr_code_generator.rb
+$(ASMPREFIX)boot.s: $(ASMPREFIX)isr_code_generator.rb $(ASMPREFIX)boot.s.pre
 	ruby $(ASMPREFIX)isr_code_generator.rb
 
 GDBPORT = $(shell expr `id -u` % 5000 + 25000)

@@ -142,7 +142,7 @@ void gdt_install()
     /* Code segment */
     gdt_set_gate(1, new_gdt_entry(
                     0x0000000,     // at 16MiB normally
-                    0x1000,        // Until 8GiB
+                    0x0100,        // Until 8GiB
                     KERNELPRIV,
                     TIGHTCTRL,
                     CANRW,
@@ -154,7 +154,7 @@ void gdt_install()
     /* Data segment */
     gdt_set_gate(2, new_gdt_entry(
                     0x00000000,     // at 0MiB
-                    0x1000,         // Until 16MiB
+                    0x0100,         // Until 8GiB
                     KERNELPRIV,
                     TIGHTCTRL,
                     CANRW,

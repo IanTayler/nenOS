@@ -20,9 +20,8 @@ mboot:
     .long FLAGS
     .long CHECKSUM
 
-    movl _sys_stack, %esp
-
 stublet:
+    movl $_sys_stack, %esp
     # Print some stuff.
     #movl $0x2f4b2f4f, 0xb8000
     call cmain
@@ -51,6 +50,8 @@ flush2:
 idt_load:
     lidt idtp
     ret
+
+#<ISR>
 
 .section .bss
 .align 0x10
