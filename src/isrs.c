@@ -141,10 +141,10 @@ uchar *exception_messages[] =
 *  happening and messing up kernel data structures */
 void fault_handler(struct regs *r)
 {
-    /*if (r->int_no < 32)
-    {*/
+    if (r->int_no < 32)
+    {
         r_print(exception_messages[r->int_no]);
         r_print(" Exception. System Halted!\n");
         for (;;);
-    /*}*/
+    }
 }
