@@ -33,7 +33,7 @@ LINKSCRIPT		= $(ASMPREFIX)link.ld
 
 .PHONY: all test iso
 
-all: $(BUILDPATH)boot.o $(BUILDPATH)kernel.o
+all: $(ASMPREFIX)boot.s $(BUILDPATH)boot.o $(BUILDPATH)kernel.o
 	$(LD) $(ILDFLAGS) $(BUILDPATH)boot.o $(BUILDPATH)kernel.o \
 	$(BUILDPATH)interface.o $(BUILDPATH)vga.o $(BUILDPATH)gdt.o \
 	$(OLDFLAGS)
@@ -61,17 +61,20 @@ $(BUILDPATH)gdt.o: $(SOURCEPREF)gdt.c
 	$(BUILDPATH)gdt.o
 
 test: all
-	if grub-file --is-x86-multiboot $(OUTPUTNAME); then \
-  	echo multiboot working!!; \
-	else \
-  	echo can\'t find multiboot!!; \
-	fi
+	@if grub-file --is-x86-multiboot $(OUTPUTNAME); @then \
+  	@echo multiboot working!!; \
+	@else \
+  	@echo can\'t find multiboot!!; \
+	@fi
 
 iso: all
-	grub-mkrescue -o $(BUILDPATH)nenos.iso ./iso
+	@grub-mkrescue -o $(BUILDPATH)nenos.iso ./iso
 
 qemu: iso
-	qemu-system-i386 -cdrom $(BUILDPATH)nenos.iso
+	@qemu-system-i386 -cdrom $(BUILDPATH)nenos.iso
+
+$(ASMPREFIX)boot.s: $(ASMPREFIX)isr_code_generator.rb
+	ruby $(ASMPREFIX)isr_code_generator.rb
 
 GDBPORT = $(shell expr `id -u` % 5000 + 25000)
 
@@ -80,4 +83,4 @@ QEMUGDB = $(shell if qemu-system-i386 -help | grep -q '^-gdb'; \
 	else echo "-s -p $(GDBPORT)"; fi)
 
 qemu-gdb: iso
-	qemu-system-i386 -cdrom $(BUILDPATH)nenos.iso -serial mon:stdio -S $(QEMUGDB)
+	@qemu-system-i386 -cdrom $(BUILDPATH)nenos.iso -serial mon:stdio -S $(QEMUGDB)

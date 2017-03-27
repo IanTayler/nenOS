@@ -2,3 +2,4 @@ build/*
 build
 iso/boot/nenos.bin
 kernel.bin
+src/arch/x86/boot.s
