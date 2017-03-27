@@ -58,7 +58,7 @@ struct gdt_ptr
 } __attribute__((packed));
 
 /* Our GDT, with ENTRIES entries, and finally our special GDT pointer*/
-struct packed_entry gdt[ENTRIES];
+struct packed_entry gdt[3];
 struct gdt_ptr gp;
 
 /* This will be a function in start.asm. We use this to properly
@@ -97,9 +97,9 @@ struct packed_entry repr_from_gdt_entry(struct gdt_entry entry)
                         );
 
     uchar fifth_char    = 0xff &
-                          (GDT_ROOT
-                            | (entry.granularity << 3)
-                            | ((entry.limit >> 16) << 4)
+                          ((GDT_ROOT << 4)
+                            | (entry.granularity << 7)
+                            | ((entry.limit >> 16))
                         );
 
     // Back to normal.
@@ -133,16 +133,16 @@ void gdt_set_gate(int num, struct gdt_entry entry)
 void gdt_install()
 {
     /* Setup the GDT pointer and limit */
-    gp.limit = (sizeof(struct packed_entry) * ENTRIES) - 1;
-    gp.base = &gdt;
+    gp.limit = (sizeof(struct packed_entry) * 3) - 1;
+    gp.base = gdt;
 
     /* Our NULL descriptor */
     gdt_set_gate(0, new_gdt_entry(0, 0, 0, 0, 0, 0, 0));
 
     /* Code segment */
     gdt_set_gate(1, new_gdt_entry(
-                    0x00000000,     // at 0MiB normally
-                    0x1000,         // Until 8Gib
+                    0x0000000,     // at 16MiB normally
+                    0x1000,        // Until 8GiB
                     KERNELPRIV,
                     TIGHTCTRL,
                     CANRW,
@@ -154,7 +154,7 @@ void gdt_install()
     /* Data segment */
     gdt_set_gate(2, new_gdt_entry(
                     0x00000000,     // at 0MiB
-                    0x1000,         // Until GMib
+                    0x1000,         // Until 16MiB
                     KERNELPRIV,
                     TIGHTCTRL,
                     CANRW,
@@ -232,7 +232,7 @@ struct idt_entry
 struct idt_ptr
 {
     u16 limit;
-    uint base;
+    u32 base;
 } __attribute__((packed));
 
 /* Declare an IDT of 256 entries. Although we will only use the
@@ -249,13 +249,20 @@ extern void idt_load();
 
 /* Use this function to set an entry in the IDT. Alot simpler
 *  than twiddling with the GDT ;) */
-void idt_set_gate(unsigned char num, unsigned long base, unsigned short sel, unsigned char flags)
+void idt_set_gate(uchar num, u32 base, u16 sel, uchar flags)
 {
     /* We'll leave you to try and code this function: take the
     *  argument 'base' and split it up into a high and low 16-bits,
     *  storing them in idt[num].base_hi and base_lo. The rest of the
     *  fields that you must set in idt[num] are fairly self-
     *  explanatory when it comes to setup */
+    idt[num].base_lo    = base & 0xffff;
+    idt[num].base_hi    = (base >> 16) & 0xffff;
+
+    idt[num].sel        = sel;
+    idt[num].flags      = flags;
+
+    idt[num].always0    = 0xff;
 }
 
 /* Installs the IDT */

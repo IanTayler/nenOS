@@ -1,7 +1,7 @@
 #include <stdint.h>
 typedef unsigned char   uchar;
-typedef unsigned short  u16;
-typedef unsigned long   u32;
+typedef uint16_t        u16;
+typedef uint32_t        u32;
 typedef unsigned int    uint;
 typedef uint64_t        u64;
 

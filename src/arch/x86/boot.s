@@ -34,6 +34,7 @@ lp:
 .global gdt_flush
 .extern gp
 gdt_flush:
+    lgdt gp
     movw $0x10, %ax
     movw %ax, %es
     movw %ax, %fs
@@ -41,7 +42,6 @@ gdt_flush:
 got_here:
     movw %ax, %ss
 loading_gdt:
-    lgdt gp
     ljmp $0x08, $flush2
 flush2:
     ret
